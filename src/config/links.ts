@@ -17,10 +17,12 @@ export type ProjectLink = {
 export const supportLinks: ProjectLink[] = [
   {
     label: "Ko-fi",
+    href: "https://ko-fi.com/dexteraiasystent",
     icon: Coffee,
   },
   {
     label: "Patreon",
+    href: "https://www.patreon.com/Dextersystentai",
     icon: HeartHandshake,
   },
   {
@@ -49,12 +51,13 @@ export const socialLinks: ProjectLink[] = [
   },
   {
     label: "X",
+    href: "https://x.com/Dexteraiasysten",
     icon: Github,
   },
 ];
 
 export const primaryLinks = {
   follow: "#support",
-  support: "#fundraising",
+  support: "https://ko-fi.com/dexteraiasystent",
   github: "https://github.com/dexterasystentai-netizen/dexter-ai-website",
 };
