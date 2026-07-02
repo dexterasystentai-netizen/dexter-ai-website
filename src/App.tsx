@@ -196,6 +196,8 @@ function HeroButton({
   icon: LucideIcon;
   subtle?: boolean;
 }) {
+  const isExternal = href.startsWith("http");
+
   return (
     <a
       href={href}
@@ -207,7 +209,7 @@ function HeroButton({
     >
       <Icon className="h-4 w-4" aria-hidden={true} />
       {label}
-      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+      {isExternal ? <ExternalLink className="h-4 w-4" aria-hidden="true" /> : null}
     </a>
   );
 }
@@ -296,7 +298,7 @@ function CurrentGoals() {
 
 function Fundraising() {
   return (
-    <section className="px-4 py-24 sm:px-6 lg:px-8">
+    <section id="fundraising" className="px-4 py-24 sm:px-6 lg:px-8">
       <motion.div
         {...fadeIn}
         className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center"
@@ -350,7 +352,7 @@ function Fundraising() {
 
 function SupportProject() {
   return (
-    <section className="border-y border-line bg-white/[0.035] px-4 py-24 sm:px-6 lg:px-8">
+    <section id="support" className="border-y border-line bg-white/[0.035] px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="Support the project"
@@ -359,25 +361,57 @@ function SupportProject() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...supportLinks, ...socialLinks].map((link) => (
-            <motion.a
-              {...fadeIn}
-              href={link.href}
-              key={link.label}
-              className="group flex min-h-20 items-center justify-between rounded-lg border border-line bg-panel/72 px-5 py-4 transition hover:-translate-y-0.5 hover:border-cyan/45 hover:bg-panel"
-            >
-              <span className="flex items-center gap-3 font-bold text-white">
-                <link.icon className="h-5 w-5 text-cyan" aria-hidden="true" />
-                {link.label}
-              </span>
-              <ExternalLink
-                className="h-4 w-4 text-white/34 transition group-hover:text-cyan"
-                aria-hidden="true"
-              />
-            </motion.a>
+            <SupportLinkCard key={link.label} link={link} />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function SupportLinkCard({
+  link,
+}: {
+  link: (typeof supportLinks)[number] | (typeof socialLinks)[number];
+}) {
+  const content = (
+    <>
+      <span className="flex items-center gap-3 font-bold text-white">
+        <link.icon className="h-5 w-5 text-cyan" aria-hidden="true" />
+        {link.label}
+      </span>
+      {link.href ? (
+        <ExternalLink
+          className="h-4 w-4 text-white/34 transition group-hover:text-cyan"
+          aria-hidden="true"
+        />
+      ) : (
+        <span className="rounded-full border border-white/12 px-3 py-1 text-xs font-bold text-white/48">
+          Coming soon
+        </span>
+      )}
+    </>
+  );
+
+  if (!link.href) {
+    return (
+      <motion.div
+        {...fadeIn}
+        className="flex min-h-20 cursor-not-allowed items-center justify-between rounded-lg border border-line bg-panel/45 px-5 py-4 opacity-75"
+      >
+        {content}
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.a
+      {...fadeIn}
+      href={link.href}
+      className="group flex min-h-20 items-center justify-between rounded-lg border border-line bg-panel/72 px-5 py-4 transition hover:-translate-y-0.5 hover:border-cyan/45 hover:bg-panel"
+    >
+      {content}
+    </motion.a>
   );
 }
 
