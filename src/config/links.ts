@@ -57,7 +57,7 @@ export const socialLinks: ProjectLink[] = [
 ];
 
 export const primaryLinks = {
-  follow: "#support",
+  follow: "#creator-support",
   support: "https://ko-fi.com/dexteraiasystent",
   github: "https://github.com/dexterasystentai-netizen/dexter-ai-website",
 };

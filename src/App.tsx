@@ -7,16 +7,20 @@ import {
   Cpu,
   ExternalLink,
   Factory,
+  FileText,
   Github,
   Hammer,
   HeartHandshake,
+  Home,
   Mail,
   MonitorCog,
   Rocket,
+  Scale,
+  ShieldCheck,
   Sparkles,
   Target,
+  UserRound,
   Video,
-  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import { primaryLinks, socialLinks, supportLinks } from "./config/links";
@@ -59,7 +63,7 @@ const whatIsDexter = [
   },
 ];
 
-const goals = [
+const buildTargets = [
   {
     icon: BrainCircuit,
     title: "Build the AI inventory module",
@@ -77,8 +81,8 @@ const goals = [
   },
   {
     icon: Factory,
-    title: "Raise funds for a dedicated workstation",
-    text: "Fund hardware capable of training, testing and running local AI tools for the workshop.",
+    title: "Support the dedicated workstation",
+    text: "Help purchase hardware capable of training, testing and running local AI tools for the workshop.",
   },
 ];
 
@@ -96,14 +100,14 @@ const buildLog = [
   {
     date: "Milestone 03",
     title: "Website in progress",
-    text: "The public project page is now ready to explain the mission, roadmap and funding goal.",
+    text: "The public project page is now ready to explain the mission, roadmap and workstation target.",
   },
 ];
 
 const progress = Math.min(
   100,
   Math.round(
-    (projectConfig.fundraising.currentPln / projectConfig.fundraising.targetPln) * 100,
+    (projectConfig.creatorSupport.currentPln / projectConfig.creatorSupport.targetPln) * 100,
   ),
 );
 
@@ -113,11 +117,132 @@ const currency = new Intl.NumberFormat("pl-PL", {
   maximumFractionDigits: 0,
 });
 
+const pageLinks = [
+  { href: "/", label: "Home", icon: Home },
+  { href: "/about", label: "About Dexter", icon: UserRound },
+  { href: "/privacy", label: "Privacy Policy", icon: ShieldCheck },
+  { href: "/terms", label: "Terms of Service", icon: Scale },
+  { href: "/contact", label: "Contact", icon: Mail },
+];
+
+type StaticPageKey = "about" | "privacy" | "terms" | "contact";
+
+const staticPages: Record<
+  StaticPageKey,
+  {
+    eyebrow: string;
+    title: string;
+    icon: LucideIcon;
+    sections: Array<{ title: string; text: string }>;
+  }
+> = {
+  about: {
+    eyebrow: "About Dexter",
+    title: "Independent AI workshop software built in public",
+    icon: UserRound,
+    sections: [
+      {
+        title: "What Dexter is",
+        text: "Dexter AI is an independent software and AI development project for a practical workshop assistant. It focuses on camera-based recognition, inventory memory, project planning and hardware-aware AI workflows.",
+      },
+      {
+        title: "Who creates it",
+        text: "Dexter AI is created and maintained by Mateusz Łupkowski as an independent creator and developer project.",
+      },
+      {
+        title: "Public development",
+        text: "The project is developed publicly through shared progress, public links and source code updates where possible, so followers can see how the assistant evolves over time.",
+      },
+      {
+        title: "Creator support",
+        text: "Payments are voluntary creator tips. They support the creator's software development time, hardware purchases and ongoing research for Dexter AI.",
+      },
+    ],
+  },
+  privacy: {
+    eyebrow: "Privacy Policy",
+    title: "How this site handles information",
+    icon: ShieldCheck,
+    sections: [
+      {
+        title: "Information collected by this site",
+        text: "This static website does not require an account and does not include its own checkout, tracking form or user database.",
+      },
+      {
+        title: "Contact email",
+        text: "If you contact Dexter AI by email, your message, email address and any details you choose to include are used only to read and respond to that communication.",
+      },
+      {
+        title: "External services",
+        text: "Links to Ko-fi, Patreon, GitHub and social platforms are operated by those providers. Their own privacy policies apply when you open those services.",
+      },
+      {
+        title: "Data sharing",
+        text: "Dexter AI does not sell personal information. Any payment or platform account data is handled by the external provider selected by the visitor.",
+      },
+    ],
+  },
+  terms: {
+    eyebrow: "Terms of Service",
+    title: "Terms for using the Dexter AI website",
+    icon: Scale,
+    sections: [
+      {
+        title: "Informational website",
+        text: "This website explains the Dexter AI project, its development progress and ways to follow or optionally support the creator.",
+      },
+      {
+        title: "Creator tips",
+        text: "Payments are optional creator tips used to support software development, hardware purchases and ongoing research. A payment does not purchase equity, employment, delivery guarantees or custom work unless separately agreed in writing.",
+      },
+      {
+        title: "No charitable solicitation",
+        text: "Dexter AI is not a charity or non-profit organization and does not solicit charitable donations.",
+      },
+      {
+        title: "External platforms",
+        text: "Payment and social links may lead to third-party services. Their own terms apply to accounts, payments, refunds and platform-specific features.",
+      },
+    ],
+  },
+  contact: {
+    eyebrow: "Contact",
+    title: "Contact Dexter AI",
+    icon: Mail,
+    sections: [
+      {
+        title: "Developer",
+        text: projectConfig.developer,
+      },
+      {
+        title: "Email",
+        text: projectConfig.contactEmail,
+      },
+      {
+        title: "Project questions",
+        text: "Use the email address for questions about Dexter AI, collaboration, public development updates or creator support.",
+      },
+    ],
+  },
+};
+
 function App() {
-  const currentYear = new Date().getFullYear();
+  const normalizedPath = window.location.pathname.replace(/\/+$/, "") || "/";
+  const pageKey = normalizedPath.slice(1) as StaticPageKey;
+
+  if (pageKey in staticPages) {
+    return (
+      <main className="min-h-screen overflow-hidden bg-ink text-white">
+        <SiteHeader />
+        <StaticPage pageKey={pageKey} />
+        <SiteFooter />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen overflow-hidden bg-ink text-white">
+      <SiteHeader />
       <Hero />
       <section className="border-y border-line bg-white/[0.03]">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px px-4 py-5 sm:grid-cols-4 lg:px-8">
@@ -131,24 +256,43 @@ function App() {
       </section>
       <WhatIsDexter />
       <CurrentGoals />
-      <Fundraising />
+      <CreatorSupport />
       <SupportProject />
+      <CreatorSupportNotice />
       <BuildLog />
-      <Contact />
-      <footer className="border-t border-line bg-black/30 px-4 py-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-white/58 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-semibold text-white">{projectConfig.name}</p>
-          <p>Built in public by Mateusz</p>
-          <p>{currentYear}</p>
-        </div>
-      </footer>
+      <ContactPanel />
+      <SiteFooter />
     </main>
+  );
+}
+
+function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-30 border-b border-line bg-ink/90 px-4 py-3 backdrop-blur sm:px-6 lg:px-8">
+      <nav className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <a href="/" className="flex items-center gap-2 text-sm font-black text-white">
+          <Bot className="h-5 w-5 text-cyan" aria-hidden="true" />
+          {projectConfig.name}
+        </a>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-white/64">
+          {pageLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </header>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative flex min-h-[92vh] items-center px-4 py-24 sm:px-6 lg:px-8">
+    <section className="relative flex min-h-[86vh] items-center px-4 py-24 sm:px-6 lg:px-8">
       <img
         src="/images/dexter-ai-workshop.png"
         alt="AI powered electronics workshop with cameras, tools and parts inventory"
@@ -176,7 +320,7 @@ function Hero() {
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <HeroButton href={primaryLinks.follow} label="Follow the project" icon={Rocket} />
-            <HeroButton href={primaryLinks.support} label="Support Dexter" icon={HeartHandshake} />
+            <HeroButton href={primaryLinks.support} label="Leave a tip" icon={HeartHandshake} />
             <HeroButton href={primaryLinks.github} label="View on GitHub" icon={Github} subtle />
           </div>
         </div>
@@ -267,25 +411,25 @@ function CurrentGoals() {
     <section className="border-y border-line bg-white/[0.035] px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
-          eyebrow="Current goals"
+          eyebrow="Current build targets"
           title="The next concrete build targets"
           text="The project is moving toward useful local AI: inventory, vision, project planning and the workstation needed to run it well."
         />
         <div className="grid gap-5 md:grid-cols-2">
-          {goals.map((goal, index) => (
+          {buildTargets.map((target, index) => (
             <motion.article
               {...fadeIn}
               transition={{ ...fadeIn.transition, delay: index * 0.05 }}
-              key={goal.title}
+              key={target.title}
               className="rounded-lg border border-line bg-ink/72 p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="grid h-12 w-12 shrink-0 place-items-center rounded-md bg-cyan/12 text-cyan">
-                  <goal.icon className="h-6 w-6" aria-hidden="true" />
+                  <target.icon className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-white">{goal.title}</h3>
-                  <p className="mt-3 leading-7 text-white/64">{goal.text}</p>
+                  <h3 className="text-xl font-black text-white">{target.title}</h3>
+                  <p className="mt-3 leading-7 text-white/64">{target.text}</p>
                 </div>
               </div>
             </motion.article>
@@ -296,22 +440,22 @@ function CurrentGoals() {
   );
 }
 
-function Fundraising() {
+function CreatorSupport() {
   return (
-    <section id="fundraising" className="px-4 py-24 sm:px-6 lg:px-8">
+    <section id="creator-support" className="px-4 py-24 sm:px-6 lg:px-8">
       <motion.div
         {...fadeIn}
         className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center"
       >
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber">
-            Fundraising
+            Creator Support
           </p>
           <h2 className="mt-3 text-3xl font-black tracking-normal text-white sm:text-5xl">
-            {projectConfig.fundraising.title}
+            {projectConfig.creatorSupport.title}
           </h2>
           <p className="mt-6 text-lg leading-8 text-white/68">
-            The goal is to fund a dedicated computer for training, testing and running
+            The workstation target supports a dedicated computer for training, testing and running
             local AI tools that can power Dexter's object recognition, inventory
             workflows and automation experiments.
           </p>
@@ -319,15 +463,15 @@ function Fundraising() {
         <div className="rounded-lg border border-line bg-panel p-6 shadow-glow sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm text-white/58">Raised</p>
+              <p className="text-sm text-white/58">Creator Tips Received</p>
               <p className="mt-1 text-4xl font-black text-white">
-                {currency.format(projectConfig.fundraising.currentPln)}
+                {currency.format(projectConfig.creatorSupport.currentPln)}
               </p>
             </div>
             <div className="sm:text-right">
-              <p className="text-sm text-white/58">Goal</p>
+              <p className="text-sm text-white/58">Development Workstation Goal</p>
               <p className="mt-1 text-2xl font-bold text-amber">
-                {currency.format(projectConfig.fundraising.targetPln)}
+                {currency.format(projectConfig.creatorSupport.targetPln)}
               </p>
             </div>
           </div>
@@ -341,8 +485,8 @@ function Fundraising() {
             />
           </div>
           <div className="mt-4 flex items-center justify-between text-sm text-white/58">
-            <span>{progress}% funded</span>
-            <span>Editable in config</span>
+            <span>{progress}% of workstation target</span>
+            <span>Optional creator tips</span>
           </div>
         </div>
       </motion.div>
@@ -355,9 +499,9 @@ function SupportProject() {
     <section id="support" className="border-y border-line bg-white/[0.035] px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
-          eyebrow="Support the project"
-          title="Follow, fund or share Dexter"
-          text="Every support link is kept in one config file, so the public page can be updated quickly as accounts go live."
+          eyebrow="Creator support"
+          title="Follow, tip or share Dexter"
+          text="Creator support links are kept in one config file, so the public page can be updated quickly as accounts go live."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...supportLinks, ...socialLinks].map((link) => (
@@ -415,6 +559,28 @@ function SupportLinkCard({
   );
 }
 
+function CreatorSupportNotice() {
+  return (
+    <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <motion.div
+        {...fadeIn}
+        className="mx-auto max-w-4xl rounded-lg border border-amber/30 bg-amber/8 p-6 text-center sm:p-8"
+      >
+        <FileText className="mx-auto h-8 w-8 text-amber" aria-hidden="true" />
+        <p className="mt-5 text-lg font-bold leading-8 text-white">
+          Dexter AI is an independent software and AI development project.
+        </p>
+        <p className="mt-4 leading-7 text-white/70">
+          Payments are optional creator tips used to support software development, hardware purchases and ongoing research.
+        </p>
+        <p className="mt-4 leading-7 text-white/70">
+          Dexter AI is not a charity or non-profit organization and does not solicit charitable donations.
+        </p>
+      </motion.div>
+    </section>
+  );
+}
+
 function BuildLog() {
   return (
     <section className="px-4 py-24 sm:px-6 lg:px-8">
@@ -446,7 +612,7 @@ function BuildLog() {
   );
 }
 
-function Contact() {
+function ContactPanel() {
   return (
     <section className="px-4 pb-24 sm:px-6 lg:px-8">
       <motion.div
@@ -456,7 +622,7 @@ function Contact() {
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan">Contact</p>
           <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
-            Want to collaborate, support or follow the project?
+            Want to collaborate, tip or follow the project?
           </h2>
         </div>
         <a
@@ -468,6 +634,81 @@ function Contact() {
         </a>
       </motion.div>
     </section>
+  );
+}
+
+function StaticPage({ pageKey }: { pageKey: StaticPageKey }) {
+  const page = staticPages[pageKey];
+  const Icon = page.icon;
+
+  return (
+    <section className="px-4 py-20 sm:px-6 lg:px-8">
+      <motion.div {...fadeIn} className="mx-auto max-w-4xl">
+        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-4 py-2 text-sm font-medium text-cyan">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+          {page.eyebrow}
+        </div>
+        <h1 className="text-4xl font-black tracking-normal text-white sm:text-6xl">
+          {page.title}
+        </h1>
+        <div className="mt-10 grid gap-4">
+          {page.sections.map((section) => (
+            <article key={section.title} className="rounded-lg border border-line bg-panel/72 p-6">
+              <h2 className="text-xl font-black text-white">{section.title}</h2>
+              <p className="mt-3 leading-7 text-white/68">{section.text}</p>
+            </article>
+          ))}
+        </div>
+        {pageKey === "contact" ? (
+          <a
+            href={`mailto:${projectConfig.contactEmail}`}
+            className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-cyan px-5 py-3 text-sm font-black text-black transition hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-cyan"
+          >
+            <Mail className="h-4 w-4" aria-hidden="true" />
+            Email Dexter
+          </a>
+        ) : null}
+      </motion.div>
+    </section>
+  );
+}
+
+function SiteFooter() {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="border-t border-line bg-black/30 px-4 py-8">
+      <div className="mx-auto grid max-w-7xl gap-6 text-sm text-white/58 md:grid-cols-[1fr_auto] md:items-start">
+        <div>
+          <p className="font-semibold text-white">{projectConfig.name}</p>
+          <p className="mt-2">Independent software and AI development project built in public.</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <div>
+              <p className="font-bold text-white">Developer:</p>
+              <p>{projectConfig.developer}</p>
+            </div>
+            <div>
+              <p className="font-bold text-white">Email:</p>
+              <a className="transition hover:text-cyan" href={`mailto:${projectConfig.contactEmail}`}>
+                {projectConfig.contactEmail}
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 md:justify-end">
+          {pageLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-md border border-white/10 px-3 py-2 transition hover:border-cyan/45 hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+          <span className="rounded-md border border-white/10 px-3 py-2">{currentYear}</span>
+        </div>
+      </div>
+    </footer>
   );
 }
 

@@ -32,21 +32,8 @@ The production build is generated in `dist/`.
 
 Most public-facing values are in:
 
-- `src/config/project.ts` - project name, tagline, fundraising target, current amount and contact email
+- `src/config/project.ts` - project name, tagline, creator support target, current amount, developer and contact email
 - `src/config/links.ts` - support, social and GitHub links
-
-## Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Create Dexter AI website"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-git push -u origin main
-```
-
-Replace `YOUR_USERNAME` and `YOUR_REPOSITORY` with your GitHub details.
 
 ## Publish with Cloudflare Pages
 
