@@ -7,7 +7,7 @@ export const projectConfig = {
   developer: "Mateusz Łupkowski",
   creatorSupport: {
     title: "Help build Dexter's workstation",
-    targetPln: 15000,
+    targetPln: 20000,
     currentPln: 0,
   },
 };
