@@ -16,6 +16,11 @@ export type ProjectLink = {
 
 export const supportLinks: ProjectLink[] = [
   {
+    label: "Zrzutka.pl",
+    href: "https://zrzutka.pl/z/dexter-asystent-ai",
+    icon: HeartHandshake,
+  },
+  {
     label: "Ko-fi",
     href: "https://ko-fi.com/dexteraiasystent",
     icon: Coffee,
@@ -58,6 +63,7 @@ export const socialLinks: ProjectLink[] = [
 
 export const primaryLinks = {
   follow: "#creator-support",
-  support: "https://ko-fi.com/dexteraiasystent",
+  support: "https://zrzutka.pl/z/dexter-asystent-ai",
+  zrzutka: "https://zrzutka.pl/z/dexter-asystent-ai",
   github: "https://github.com/dexterasystentai-netizen/dexter-ai-website",
 };

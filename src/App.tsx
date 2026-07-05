@@ -488,6 +488,14 @@ function CreatorSupport() {
             <span>{progress}% of workstation target</span>
             <span>Optional creator tips</span>
           </div>
+          <a
+            href={primaryLinks.zrzutka}
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-cyan px-5 py-3 text-sm font-black text-black shadow-glow transition hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-cyan"
+          >
+            <HeartHandshake className="h-4 w-4" aria-hidden="true" />
+            Support on Zrzutka.pl
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
       </motion.div>
     </section>
